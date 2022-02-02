@@ -1,6 +1,6 @@
-import { ActionMapTypes, ASYNC_GET_WEATHER, GET_WEATHER } from "./actionTypes";
+import { ActionMapTypes, ASYNC_GET_WEATHER, GET_WEATHER, WeatherType } from "./actionTypes";
 
-export function getWeather(payload: string): ActionMapTypes["GET_WEATHER"] {
+export function getWeather(payload: WeatherType): ActionMapTypes["GET_WEATHER"] {
    return {
      type: GET_WEATHER,
      payload,

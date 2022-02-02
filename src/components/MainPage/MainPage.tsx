@@ -1,17 +1,23 @@
 import React, { FormEvent } from 'react';
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { asyncGetWeather } from "../../store/action";
 // @ts-ignore
 import MainPageClasses from "./MainPage.module.scss"
 // @ts-ignore
 import searchIcon from "../../assets/search.svg"
+import { RootState } from "../../store/store";
+// @ts-ignore
+import sunIcon from "../../assets/Sun.svg"
 
 const MainPage = () => {
+  const weather = useSelector((state: RootState) => state.weatherReducer)
+
   const dispatch = useDispatch()
   const getWeather = (e: any) => {
     e.preventDefault()
     dispatch(asyncGetWeather(e.target.elements.city.value))
+    console.log('=======>weather', weather)
   }
   return (
       <main className={MainPageClasses.main}>
@@ -21,7 +27,15 @@ const MainPage = () => {
           </button>
         </form>
         <section className={MainPageClasses.main__info_section}>
-          <p>Weather Info</p>
+          <h2 className={MainPageClasses.main__info_section__city_name}>{weather.name}</h2>
+          <div className={MainPageClasses.main__info_section__temp_section}>
+            <img src={sunIcon} alt="weather icon" className={MainPageClasses.main__info_section__temp_section__image}/>
+            <p>{weather.main && weather.main.temp}</p>
+            <p>{ weather.weather && weather.weather[0].main}</p>
+          </div>
+          <div className={MainPageClasses.main__info_section__other_weather_info}>
+            <p>otherInfo</p>
+          </div>
         </section>
       </main>
   )

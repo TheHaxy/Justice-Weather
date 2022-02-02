@@ -8,6 +8,7 @@
   &__form{
     display: flex;
     gap: 1px;
+    margin-bottom: 50px;
 
     &__input{
       background: rgba(242, 242, 242, 1);
@@ -36,5 +37,35 @@
         outline: 1px solid rgba(212, 212, 212, 10);
       }
     }
+  }
+
+  &__info_section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 450px;
+    height: 450px;
+    padding: 16px;
+    background: linear-gradient(180deg, #62B8F6 0%, #2C79C1 77.96%);
+    border-radius: 30px;
+
+    &__temp_section{
+      gap: 26px;
+      display: flex;
+      justify-content: space-between;
+
+      &__image{
+        width: 200px;
+        height: 200px;
+
+      }
+    }
+
+    &__city_name{
+      margin: 6px 0 40px 0;
+      color: rgba(255, 255, 255, 1);
+      font-weight: 600;
+    }
+
   }
 }
