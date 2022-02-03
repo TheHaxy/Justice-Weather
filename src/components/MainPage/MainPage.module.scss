@@ -7,11 +7,12 @@
   gap: 16px;
 
   &__error_img{
-    width: 430px;
-    height: 430px;
+    width: 400px;
+    height: 400px;
   }
   &__error{
-
+    background: aliceblue;
+    border-radius: 18px;
     &__text{
       animation: 0.3s error forwards;
       margin: 0;
@@ -64,6 +65,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     width: 450px;
     height: 450px;
     padding: 16px;

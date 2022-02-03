@@ -1,7 +1,7 @@
 export const GET_WEATHER = "GET_WEATHER";
 export const ASYNC_GET_WEATHER = "ASYNC_GET_WEATHER";
 export const ASYNC_GET_LOCATION = "ASYNC_GET_LOCATION";
-export const GET_WEATHER_ERROR = "GET_WEATHER_ERROR"
+export const GET_WEATHER_ERROR = "GET_WEATHER_ERROR";
 
 export interface WeatherType {
   base?: string;
@@ -29,8 +29,8 @@ export interface WeatherType {
 }
 
 export interface PositionCoordType {
-  latitude?: number,
-  longitude?: number,
+  latitude?: number;
+  longitude?: number;
 }
 
 export type ActionMapTypes = {
