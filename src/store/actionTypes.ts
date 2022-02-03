@@ -1,5 +1,6 @@
 export const GET_WEATHER = "GET_WEATHER";
 export const ASYNC_GET_WEATHER = "ASYNC_GET_WEATHER";
+export const ASYNC_GET_LOCATION = "ASYNC_GET_LOCATION";
 
 export interface WeatherType {
   base?: string;
@@ -26,6 +27,11 @@ export interface WeatherType {
   wind?: { speed: string };
 }
 
+export interface PositionCoordType {
+  latitude?: number,
+  longitude?: number,
+}
+
 export type ActionMapTypes = {
   [ASYNC_GET_WEATHER]: {
     type: typeof ASYNC_GET_WEATHER;
@@ -34,6 +40,10 @@ export type ActionMapTypes = {
   [GET_WEATHER]: {
     type: typeof GET_WEATHER;
     payload: WeatherType;
+  };
+  [ASYNC_GET_LOCATION]: {
+    type: typeof ASYNC_GET_LOCATION;
+    payload: PositionCoordType;
   };
 };
 
