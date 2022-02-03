@@ -4,12 +4,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 16px;
 
+  &__error_img{
+    width: 430px;
+    height: 430px;
+  }
+  &__error{
+
+    &__text{
+      animation: 0.3s error forwards;
+      margin: 0;
+      height: 16px;
+      padding: 12px;
+    }
+
+    &__span{
+      cursor: pointer;
+      color: #2C79C1;
+      border-bottom: 1px solid #2C79C1;
+    }
+  }
   &__form {
     width: 482px;
     display: flex;
     gap: 1px;
-    margin-bottom: 50px;
 
     &__input {
       flex: 1 1 0;
@@ -105,5 +124,18 @@
       border-top: 2px solid #ffffff;
 
     }
+  }
+}
+
+@keyframes error {
+  0%{
+    opacity: 0;
+    height: 0;
+    padding: 0;
+  }
+  100%{
+    opacity: 1;
+    height: 16px;
+    padding: 12px;
   }
 }

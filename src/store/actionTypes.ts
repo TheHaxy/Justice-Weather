@@ -1,6 +1,7 @@
 export const GET_WEATHER = "GET_WEATHER";
 export const ASYNC_GET_WEATHER = "ASYNC_GET_WEATHER";
 export const ASYNC_GET_LOCATION = "ASYNC_GET_LOCATION";
+export const GET_WEATHER_ERROR = "GET_WEATHER_ERROR"
 
 export interface WeatherType {
   base?: string;
@@ -44,6 +45,10 @@ export type ActionMapTypes = {
   [ASYNC_GET_LOCATION]: {
     type: typeof ASYNC_GET_LOCATION;
     payload: PositionCoordType;
+  };
+  [GET_WEATHER_ERROR]: {
+    type: typeof GET_WEATHER_ERROR;
+    payload: object;
   };
 };
 

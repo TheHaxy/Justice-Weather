@@ -1,9 +1,10 @@
-import React, { FormEvent, useEffect } from "react";
+import React, { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { asyncGetCurrLocation, asyncGetWeather } from "../../store/action";
 
 import OtherWeatherInfo from "../OtherWeatherInfo/OtherWeatherInfo";
+import { weatherStateIcons } from "../../mockdata/weatherStateIcons";
 
 // @ts-ignore
 import MainPageClasses from "./MainPage.module.scss";
@@ -20,13 +21,15 @@ import raindbow from "../../assets/Rainbow.svg";
 // @ts-ignore
 import raindrops from "../../assets/Raindrops.svg";
 // @ts-ignore
-import { weatherStateIcons } from "../../mockdata/weatherStateIcons";
+// eslint-disable-next-line no-unused-vars
+import errorIcon from "../../assets/flame-searching.png"
 
 const MainPage = () => {
   const weather = useSelector((state: RootState) => state.weatherReducer);
   const weatherState = weather.weather && weather.weather[0].main
-
+  const [errorText, setErrorText] = useState(false)
   const dispatch = useDispatch();
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => dispatch(asyncGetCurrLocation(position.coords)))
   }, [])
@@ -34,7 +37,19 @@ const MainPage = () => {
   const getWeather = (e: any) => {
     e.preventDefault();
     dispatch(asyncGetWeather(e.target.elements.city.value));
+    e.target.elements.city.value = ""
   };
+
+  useMemo(() => {
+    if (!weather.weather) setErrorText(true)
+    else {
+      setErrorText(false)
+    }
+  }, [weather])
+
+  const rerouteToOtherCity = () => {
+    dispatch(asyncGetWeather("Moscow"));
+  }
 
   return (
       <main className={MainPageClasses.main}>
@@ -52,64 +67,74 @@ const MainPage = () => {
             <img src={searchIcon} alt="search"/>
           </button>
         </form>
+        {errorText &&
+            <div className={MainPageClasses.main__error}>
+                <p className={MainPageClasses.main__error__text}>This city does not exist, perhaps you
+                    meant <span className={MainPageClasses.main__error__span} onClick={rerouteToOtherCity}>Moscow</span>?</p>
+            </div>
+        }
         <section className={MainPageClasses.main__info_section}>
-          <h2 className={MainPageClasses.main__info_section__city_name}>
-            {weather.name}
-          </h2>
-          <div className={MainPageClasses.main__info_section__temp_section}>
-            <img
-                src={weatherStateIcons[weatherState]}
-                alt="weather icon"
-                className={MainPageClasses.main__info_section__temp_section__image}
-            />
-            <div
-                className={MainPageClasses.main__info_section__temp_section__info}
-            >
-              <p
-                  className={
-                    MainPageClasses.main__info_section__temp_section__info__temp
-                  }
-              >
-                {weather.main && Math.round(weather.main.temp)}
-                <span
-                    className={
-                      MainPageClasses.main__info_section__temp_section__info__temp__span
-                    }
+          {!errorText ?
+              <>
+              <h2 className={MainPageClasses.main__info_section__city_name}>
+                {weather.name}
+              </h2>
+              <div className={MainPageClasses.main__info_section__temp_section}>
+                <img
+                    src={weatherStateIcons[weatherState]}
+                    alt="weather icon"
+                    className={MainPageClasses.main__info_section__temp_section__image}
+                />
+                <div
+                    className={MainPageClasses.main__info_section__temp_section__info}
                 >
+                  <p
+                      className={
+                        MainPageClasses.main__info_section__temp_section__info__temp
+                      }
+                  >
+                    {weather.main && Math.round(weather.main.temp)}
+                    <span
+                        className={
+                          MainPageClasses.main__info_section__temp_section__info__temp__span
+                        }
+                    >
                 °
               </span>
-              </p>
-              <p
-                  className={
-                    MainPageClasses.main__info_section__temp_section__info__weather
-                  }
-              >
-                {weather.weather && weather.weather[0].main}
-              </p>
+                  </p>
+                  <p
+                      className={
+                        MainPageClasses.main__info_section__temp_section__info__weather
+                      }
+                  >
+                    {weather.weather && weather.weather[0].main}
+                  </p>
+                </div>
+              </div>
+            <div className={MainPageClasses.main__info_section__other_weather_info}>
+            <OtherWeatherInfo
+            name="Wind"
+            image={wind}
+            value={`${weather.wind && weather.wind.speed} km/h`}
+            />
+            <OtherWeatherInfo
+            name="Feels like"
+            image={raindbow}
+            value={`${weather.main && weather.main.feels_like}°C`}
+            />
+            <OtherWeatherInfo
+            name="Pressure"
+            image={temperature}
+            value={`${weather.main && weather.main.pressure} mbar`}
+            />
+            <OtherWeatherInfo
+            name="Humidity"
+            image={raindrops}
+            value={`${weather.main && weather.main.humidity}%`}
+            />
             </div>
-          </div>
-          <div className={MainPageClasses.main__info_section__other_weather_info}>
-            <OtherWeatherInfo
-                name="Wind"
-                image={wind}
-                value={`${weather.wind && weather.wind.speed} km/h`}
-            />
-            <OtherWeatherInfo
-                name="Feels like"
-                image={raindbow}
-                value={`${weather.main && weather.main.feels_like}°C`}
-            />
-            <OtherWeatherInfo
-                name="Pressure"
-                image={temperature}
-                value={`${weather.main && weather.main.pressure} mbar`}
-            />
-            <OtherWeatherInfo
-                name="Humidity"
-                image={raindrops}
-                value={`${weather.main && weather.main.humidity}%`}
-            />
-          </div>
+              </>
+              : <img src={errorIcon} alt="Error 404" className={MainPageClasses.main__error_img} /> }
         </section>
       </main>
   );

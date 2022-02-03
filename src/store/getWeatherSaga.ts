@@ -1,5 +1,5 @@
 import { put, takeEvery, call } from "redux-saga/effects"
-import { getWeather } from "./action";
+import { getWeather, getWeatherError } from "./action";
 import { ActionType, ASYNC_GET_WEATHER, ASYNC_GET_LOCATION } from "./actionTypes";
 
 function* getNewWeatherWorker(action: ActionType): object {
@@ -12,9 +12,10 @@ function* getNewWeatherWorker(action: ActionType): object {
     data = yield call(weatherApi)
     // eslint-disable-next-line no-promise-executor-return
     json = yield call(() => new Promise(res => res(data.json())))
-    console.log('=======>json', json)
+    yield put(getWeatherError({}))
+  } else {
+    yield put(getWeather(json))
   }
-  yield put(getWeather(json))
 }
 
 function* getCurrWeatherWorker(action: any): object {
