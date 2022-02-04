@@ -6,162 +6,163 @@ import { asyncGetCurrLocation, asyncGetWeather } from "../../store/action";
 import OtherWeatherInfo from "../OtherWeatherInfo/OtherWeatherInfo";
 import { weatherStateIcons } from "../../mockdata/weatherStateIcons";
 import { WeatherType } from "../../store/actionTypes";
-// @ts-ignore
-import MainPageClasses from "./MainPage.module.scss";
-// @ts-ignore
-import searchIcon from "../../assets/search.svg";
 import { RootState } from "../../store/store";
-// @ts-ignore
-// @ts-ignore
+
+import MainPageClasses from "./MainPage.module.scss";
+import searchIcon from "../../assets/search.svg";
 import temperature from "../../assets/Temperature high.svg";
-// @ts-ignore
 import wind from "../../assets/Wind sun.svg";
-// @ts-ignore
-import raindbow from "../../assets/Rainbow.svg";
-// @ts-ignore
+import rainbow from "../../assets/Rainbow.svg";
 import raindrops from "../../assets/Raindrops.svg";
-// @ts-ignore
-// eslint-disable-next-line no-unused-vars
 import errorIcon from "../../assets/flame-searching.png";
 
 const MainPage = () => {
   const weather: WeatherType = useSelector(
-    (state: RootState) => state.weatherReducer
-  );
-  const [errorText, setErrorText] = useState(false);
+      (state: RootState) => state.weatherReducer);
+  const [isShowErrorText, setIsShowErrorText] = useState(false);
   const dispatch = useDispatch();
+
+  const currentTemp = useMemo(() => weather.main && Math.round(weather.main.temp), [weather])
+  const weatherImage = useMemo(() => weather.weather && weatherStateIcons[weather.weather[0].main], [weather])
+  const metcast = useMemo(() => weather.weather && weather.weather[0].main, [weather])
+
+  const otherInfo = useMemo(() => ({
+    windSpeed: weather.wind && weather.wind.speed,
+    feelsLike: weather.main && weather.main.feels_like,
+    pressure: weather.main && weather.main.pressure,
+    humidity: weather.main && weather.main.humidity
+
+  }), [weather])
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) =>
-      dispatch(asyncGetCurrLocation(position.coords))
+        dispatch(asyncGetCurrLocation(position.coords))
     );
   }, []);
 
-  const getWeather = (e: FormEvent) => {
-    e.preventDefault();
-    dispatch(asyncGetWeather((e.target as HTMLFormElement).city.value));
-    (e.target as HTMLFormElement).city.value = "";
-  };
-
-  useMemo(() => {
-    if (!weather.weather) setErrorText(true);
+  useEffect(() => {
+    if (!weather.weather) setIsShowErrorText(true);
     else {
-      setErrorText(false);
+      setIsShowErrorText(false);
     }
   }, [weather]);
+
+  const getWeather = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    dispatch(asyncGetWeather(e.currentTarget.city.value));
+    e.currentTarget.city.value = "";
+  };
 
   const rerouteToOtherCity = () => {
     dispatch(asyncGetWeather("Moscow"));
   };
 
   return (
-    <main className={MainPageClasses.main}>
-      <form
-        className={MainPageClasses.main__form}
-        onSubmit={(e: FormEvent) => getWeather(e)}
-      >
-        <input
-          type="text"
-          name="city"
-          placeholder="Search Your City"
-          className={MainPageClasses.main__form__input}
-        />
-        <button type="submit" className={MainPageClasses.main__form__button}>
-          <img src={searchIcon} alt="search" />
-        </button>
-      </form>
-      {errorText && (
-        <div className={MainPageClasses.main__error}>
-          <p className={MainPageClasses.main__error__text}>
-            This city does not exist, perhaps you meant{" "}
-            <span
-              className={MainPageClasses.main__error__span}
-              onClick={rerouteToOtherCity}
-            >
+      <main className={MainPageClasses.main}>
+        <form
+            className={MainPageClasses.main__form}
+            onSubmit={(e: FormEvent<HTMLFormElement>) => getWeather(e)}
+        >
+          <input
+              type="text"
+              name="city"
+              placeholder="Search Your City"
+              className={MainPageClasses.main__form__input}
+          />
+          <button type="submit" className={MainPageClasses.main__form__button}>
+            <img src={searchIcon} alt="search"/>
+          </button>
+        </form>
+        {isShowErrorText && (
+            <div className={MainPageClasses.main__error}>
+              <p className={MainPageClasses.main__error__text}>
+                This city does not exist, perhaps you meant{" "}
+                <span
+                    className={MainPageClasses.main__error__span}
+                    onClick={rerouteToOtherCity}
+                >
               Moscow
             </span>
-            ?
-          </p>
-        </div>
-      )}
-      <section className={MainPageClasses.main__info_section}>
-        {!errorText ? (
-          <>
-            <h2 className={MainPageClasses.main__info_section__city_name}>
-              {weather.name}
-            </h2>
-            <div className={MainPageClasses.main__info_section__temp_section}>
-              <img
-                src={
-                  weather.weather && weatherStateIcons[weather.weather[0].main]
-                }
-                alt="weather icon"
-                className={
-                  MainPageClasses.main__info_section__temp_section__image
-                }
-              />
-              <div
-                className={
-                  MainPageClasses.main__info_section__temp_section__info
-                }
-              >
-                <p
-                  className={
-                    MainPageClasses.main__info_section__temp_section__info__temp
-                  }
-                >
-                  {weather.main && Math.round(weather.main.temp)}
-                  <span
-                    className={
-                      MainPageClasses.main__info_section__temp_section__info__temp__span
-                    }
+                ?
+              </p>
+            </div>
+        )}
+        <section className={MainPageClasses.main__info_section}>
+          {!isShowErrorText ? (
+              <>
+                <h2 className={MainPageClasses.main__info_section__city_name}>
+                  {weather.name}
+                </h2>
+                <div className={MainPageClasses.main__info_section__temp_section}>
+                  <img
+                      src={weatherImage}
+                      alt="weather icon"
+                      className={
+                        MainPageClasses.main__info_section__temp_section__image
+                      }
+                  />
+                  <div
+                      className={
+                        MainPageClasses.main__info_section__temp_section__info
+                      }
                   >
+                    <p
+                        className={
+                          MainPageClasses.main__info_section__temp_section__info__temp
+                        }
+                    >
+                      {currentTemp}
+                      <span
+                          className={
+                            MainPageClasses.main__info_section__temp_section__info__temp__span
+                          }
+                      >
                     °
                   </span>
-                </p>
-                <p
-                  className={
-                    MainPageClasses.main__info_section__temp_section__info__weather
-                  }
+                    </p>
+                    <p
+                        className={
+                          MainPageClasses.main__info_section__temp_section__info__weather
+                        }
+                    >
+                      {metcast}
+                    </p>
+                  </div>
+                </div>
+                <div
+                    className={MainPageClasses.main__info_section__other_weather_info}
                 >
-                  {weather.weather && weather.weather[0].main}
-                </p>
-              </div>
-            </div>
-            <div
-              className={MainPageClasses.main__info_section__other_weather_info}
-            >
-              <OtherWeatherInfo
-                name="Wind"
-                image={wind}
-                value={`${weather.wind && weather.wind.speed} km/h`}
+                  <OtherWeatherInfo
+                      name="Wind"
+                      image={wind}
+                      value={`${otherInfo.windSpeed} km/h`}
+                  />
+                  <OtherWeatherInfo
+                      name="Feels like"
+                      image={rainbow}
+                      value={`${otherInfo.feelsLike}°C`}
+                  />
+                  <OtherWeatherInfo
+                      name="Pressure"
+                      image={temperature}
+                      value={`${otherInfo.pressure} mbar`}
+                  />
+                  <OtherWeatherInfo
+                      name="Humidity"
+                      image={raindrops}
+                      value={`${otherInfo.humidity}%`}
+                  />
+                </div>
+              </>
+          ) : (
+              <img
+                  src={errorIcon}
+                  alt="Error 404"
+                  className={MainPageClasses.main__error_img}
               />
-              <OtherWeatherInfo
-                name="Feels like"
-                image={raindbow}
-                value={`${weather.main && weather.main.feels_like}°C`}
-              />
-              <OtherWeatherInfo
-                name="Pressure"
-                image={temperature}
-                value={`${weather.main && weather.main.pressure} mbar`}
-              />
-              <OtherWeatherInfo
-                name="Humidity"
-                image={raindrops}
-                value={`${weather.main && weather.main.humidity}%`}
-              />
-            </div>
-          </>
-        ) : (
-          <img
-            src={errorIcon}
-            alt="Error 404"
-            className={MainPageClasses.main__error_img}
-          />
-        )}
-      </section>
-    </main>
+          )}
+        </section>
+      </main>
   );
 };
 

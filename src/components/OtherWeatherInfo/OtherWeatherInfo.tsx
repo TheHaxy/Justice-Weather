@@ -1,17 +1,14 @@
 import React from "react";
 
-// @ts-ignore
 import InfoClasses from "./OtherWeatherInfo.module.scss";
 
-const OtherWeatherInfo = ({
-  name,
-  image,
-  value,
-}: {
+interface OtherInfoType{
   name: string;
   image: string;
   value: any;
-}) => (
+}
+
+const OtherWeatherInfo = ({name, image, value,}: OtherInfoType): JSX.Element => (
   <div className={InfoClasses.info_block}>
     <img src={image} alt="temp" className={InfoClasses.info_block__image} />
     <div className={InfoClasses.info_block__info}>
