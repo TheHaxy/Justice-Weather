@@ -15,10 +15,13 @@ import wind from "../../assets/Wind sun.svg";
 import rainbow from "../../assets/Rainbow.svg";
 import raindrops from "../../assets/Raindrops.svg";
 import errorIcon from "../../assets/flame-searching.png";
+import loader from "../../assets/yy3.gif"
+
 
 const MainPage = () => {
   const weather: WeatherType = useSelector(
       (state: RootState) => state.weatherReducer);
+  const [isLoad, setIsLoad] = useState(false)
   const [isShowErrorText, setIsShowErrorText] = useState(false);
   const dispatch = useDispatch();
 
@@ -36,14 +39,14 @@ const MainPage = () => {
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) =>
-        dispatch(asyncGetCurrLocation(position.coords))
-    );
+        dispatch(asyncGetCurrLocation(position.coords)));
   }, []);
 
   useEffect(() => {
     if (!weather.weather) setIsShowErrorText(true);
     else {
       setIsShowErrorText(false);
+      setIsLoad(true)
     }
   }, [weather]);
 
@@ -73,7 +76,7 @@ const MainPage = () => {
             <img src={searchIcon} alt="search"/>
           </button>
         </form>
-        {isShowErrorText && (
+        {isShowErrorText && isLoad && (
             <div className={MainPageClasses.main__error}>
               <p className={MainPageClasses.main__error__text}>
                 This city does not exist, perhaps you meant{" "}
@@ -88,79 +91,82 @@ const MainPage = () => {
             </div>
         )}
         <section className={MainPageClasses.main__info_section}>
-          {!isShowErrorText ? (
+          {isLoad ?
               <>
-                <h2 className={MainPageClasses.main__info_section__city_name}>
-                  {weather.name}
-                </h2>
-                <div className={MainPageClasses.main__info_section__temp_section}>
-                  <img
-                      src={weatherImage}
-                      alt="weather icon"
-                      className={
-                        MainPageClasses.main__info_section__temp_section__image
-                      }
-                  />
-                  <div
-                      className={
-                        MainPageClasses.main__info_section__temp_section__info
-                      }
-                  >
-                    <p
-                        className={
-                          MainPageClasses.main__info_section__temp_section__info__temp
-                        }
-                    >
-                      {currentTemp}
-                      <span
-                          className={
-                            MainPageClasses.main__info_section__temp_section__info__temp__span
-                          }
-                      >
+                {!isShowErrorText ? (
+                    <>
+                      <h2 className={MainPageClasses.main__info_section__city_name}>
+                        {weather.name}
+                      </h2>
+                      <div className={MainPageClasses.main__info_section__temp_section}>
+                        <img
+                            src={weatherImage}
+                            alt="weather icon"
+                            className={
+                              MainPageClasses.main__info_section__temp_section__image
+                            }
+                        />
+                        <div
+                            className={
+                              MainPageClasses.main__info_section__temp_section__info
+                            }
+                        >
+                          <p
+                              className={
+                                MainPageClasses.main__info_section__temp_section__info__temp
+                              }
+                          >
+                            {currentTemp}
+                            <span
+                                className={
+                                  MainPageClasses.main__info_section__temp_section__info__temp__span
+                                }
+                            >
                     °
                   </span>
-                    </p>
-                    <p
-                        className={
-                          MainPageClasses.main__info_section__temp_section__info__weather
-                        }
-                    >
-                      {metcast}
-                    </p>
-                  </div>
-                </div>
-                <div
-                    className={MainPageClasses.main__info_section__other_weather_info}
-                >
-                  <OtherWeatherInfo
-                      name="Wind"
-                      image={wind}
-                      value={`${otherInfo.windSpeed} km/h`}
-                  />
-                  <OtherWeatherInfo
-                      name="Feels like"
-                      image={rainbow}
-                      value={`${otherInfo.feelsLike}°C`}
-                  />
-                  <OtherWeatherInfo
-                      name="Pressure"
-                      image={temperature}
-                      value={`${otherInfo.pressure} mbar`}
-                  />
-                  <OtherWeatherInfo
-                      name="Humidity"
-                      image={raindrops}
-                      value={`${otherInfo.humidity}%`}
-                  />
-                </div>
-              </>
-          ) : (
-              <img
-                  src={errorIcon}
-                  alt="Error 404"
-                  className={MainPageClasses.main__error_img}
-              />
-          )}
+                          </p>
+                          <p
+                              className={
+                                MainPageClasses.main__info_section__temp_section__info__weather
+                              }
+                          >
+                            {metcast}
+                          </p>
+                        </div>
+                      </div>
+                      <div
+                          className={MainPageClasses.main__info_section__other_weather_info}
+                      >
+                        <OtherWeatherInfo
+                            name="Wind"
+                            image={wind}
+                            value={`${otherInfo.windSpeed} km/h`}
+                        />
+                        <OtherWeatherInfo
+                            name="Feels like"
+                            image={rainbow}
+                            value={`${otherInfo.feelsLike}°C`}
+                        />
+                        <OtherWeatherInfo
+                            name="Pressure"
+                            image={temperature}
+                            value={`${otherInfo.pressure} mbar`}
+                        />
+                        <OtherWeatherInfo
+                            name="Humidity"
+                            image={raindrops}
+                            value={`${otherInfo.humidity}%`}
+                        />
+                      </div>
+                    </>
+                ) : (
+                    <img
+                        src={errorIcon}
+                        alt="Error 404"
+                        className={MainPageClasses.main__error_img}
+                    />
+                )}
+              </> : <img src={loader} alt="Loading"/>}
         </section>
       </main>
   );
