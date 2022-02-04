@@ -26,6 +26,7 @@
                     ".jsx",
                     ".ts",
                     ".tsx"
+
                 ]
             }
         }
@@ -48,6 +49,8 @@
     ],
     "rules": {
         "react/react-in-jsx-scope": "off",
+        "no-promise-executor-return": "off",
+        "default-param-last": "off",
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", "ts", ".tsx"] }],
         "react/function-component-definition": [
             2,

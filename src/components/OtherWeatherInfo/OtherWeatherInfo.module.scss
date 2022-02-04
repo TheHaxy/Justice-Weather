@@ -1,0 +1,25 @@
+.info_block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  margin: 6px 0;
+  width: 160px;
+
+  &__image {
+    width: 48px;
+    height: 48px;
+  }
+
+  &__info {
+    margin: 0;
+
+    &__value {
+      margin: 0;
+    }
+
+    &__name {
+      margin: 0;
+    }
+  }
+}
